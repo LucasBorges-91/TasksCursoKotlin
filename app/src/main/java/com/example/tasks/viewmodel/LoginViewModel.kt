@@ -35,7 +35,6 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
             override fun onFailure(str: String) {
                 mLogin.value = ValidationListener( str )
             }
-
         })
     }
 
