@@ -23,7 +23,7 @@ class PriorityRepository( context: Context) {
                 call: Call<List<PriorityModel>>,
                 response: Response<List<PriorityModel>>
             ) {
-                if ( response.code() != TaskConstants.HTTP.SUCCESS ) {
+                if ( response.code() == TaskConstants.HTTP.SUCCESS ) {
                     mPriorityDataBase.clear()
                     response.body()?.let { mPriorityDataBase.save(it) }
                 }
@@ -31,7 +31,8 @@ class PriorityRepository( context: Context) {
 
             override fun onFailure(call: Call<List<PriorityModel>>, t: Throwable) {
             }
-
         })
     }
+
+    fun list() = mPriorityDataBase.list()
 }
