@@ -5,16 +5,18 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.tasks.R
 import com.example.tasks.service.constants.TaskConstants
 import com.example.tasks.service.listener.TaskListener
+import com.example.tasks.service.listener.ValidationListener
 import com.example.tasks.view.adapter.TaskAdapter
 import com.example.tasks.viewmodel.AllTasksViewModel
 
@@ -22,6 +24,7 @@ class AllTasksFragment : Fragment() {
 
     private lateinit var mViewModel: AllTasksViewModel
     private lateinit var mListener: TaskListener
+
     private val mAdapter = TaskAdapter()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, s: Bundle?): View {
@@ -43,15 +46,16 @@ class AllTasksFragment : Fragment() {
             }
 
             override fun onDeleteClick(id: Int) {
-                mViewModel.delete( id )
+                mViewModel.delete(id)
+
             }
 
             override fun onCompleteClick(id: Int) {
-                mViewModel.complete( id )
+                mViewModel.complete(id)
             }
 
             override fun onUndoClick(id: Int) {
-                mViewModel.undo( id )
+                mViewModel.undo(id)
             }
         }
 
@@ -69,9 +73,15 @@ class AllTasksFragment : Fragment() {
     }
 
     private fun observe() {
-        mViewModel.tasks.observe( viewLifecycleOwner, Observer {
-            if ( it.count() > 0 ) {
-                mAdapter.updateListener( it )
+        mViewModel.tasks.observe(viewLifecycleOwner, Observer {
+            if (it.count() > 0) {
+                mAdapter.updateListener(it)
+            }
+        })
+
+        mViewModel.validation.observe(viewLifecycleOwner, Observer {
+            if (it.success()) {
+                Toast.makeText(context, getString(R.string.task_removed), Toast.LENGTH_SHORT).show()
             }
         })
     }
