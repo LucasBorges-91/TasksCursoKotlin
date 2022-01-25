@@ -2,11 +2,11 @@ package com.example.tasks.service.repository
 
 import android.content.Context
 import com.example.tasks.service.constants.TaskConstants
+import com.example.tasks.service.listener.APIListener
 import com.example.tasks.service.model.PriorityModel
 import com.example.tasks.service.repository.local.TaskDatabase
 import com.example.tasks.service.repository.remote.PriorityService
 import com.example.tasks.service.repository.remote.RetrofitClient
-import com.google.gson.Gson
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -16,7 +16,7 @@ class PriorityRepository( val context: Context ) : BaseRepository( context ) {
     private val mRemote = RetrofitClient.createService( PriorityService::class.java )
     private val mPriorityDataBase = TaskDatabase.getDatabase( context ).priorityDAO()
 
-    fun all() {
+    fun all( param: APIListener<List<PriorityModel>> ) {
 
         if ( !isConnectionAvailable( context ) ) {
             return

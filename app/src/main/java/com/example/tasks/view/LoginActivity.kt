@@ -28,11 +28,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
         // Inicializa eventos
         setListeners();
         observe()
-
-        // Verifica se usuário está logado
-        verifyLoggedUser()
-
-        showAuthentication()
+        mViewModel.isAuthenticationAvailable()
     }
 
     override fun onClick(v: View) {
@@ -52,16 +48,10 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
             this@LoginActivity,
             executor,
             object : BiometricPrompt.AuthenticationCallback() {
-                override fun onAuthenticationFailed() {
-                    super.onAuthenticationFailed()
-                }
-
-                override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
-                    super.onAuthenticationError(errorCode, errString)
-                }
-
                 override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
                     super.onAuthenticationSucceeded(result)
+                    startActivity( Intent( applicationContext, MainActivity::class.java ) )
+                    finish()
                 }
             }
         )
@@ -85,12 +75,8 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
         text_register.setOnClickListener(this)
     }
 
-    /**
-     * Verifica se usuário está logado
-     */
-    private fun verifyLoggedUser() {
-        mViewModel.verifyLoggedUser()
-    }
+
+
 
     /**
      * Observa ViewModel
@@ -105,10 +91,9 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                 Toast.makeText( this, message, Toast.LENGTH_SHORT ).show()
             }
         })
-        mViewModel.loggedUser.observe( this, Observer {
+        mViewModel.fingerPrint.observe( this, Observer {
             if ( it ) {
-                startActivity( Intent( this, MainActivity::class.java ) )
-                finish()
+               showAuthentication()
             }
         })
     }
